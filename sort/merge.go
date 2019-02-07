@@ -1,38 +1,53 @@
 package sort
 
+// O(nlogn)
+// space: O(n)
 func MergeSort(a []int) {
 	if len(a) < 2 {
 		return
 	}
 
-	mid := len(a) / 2
-	MergeSort(a[:mid])
-	MergeSort(a[mid:])
+	mergeSort(a, 0, len(a)-1)
+}
 
-	if a[mid-1] <= a[mid] {
+func mergeSort(a []int, start, end int) {
+	if start >= end {
 		return
 	}
 
-	s := make([]int, mid)
-	copy(s, a[:mid])
+	mid := (start + end) / 2
+	mergeSort(a, start, mid)
+	mergeSort(a, mid+1, end)
 
-	left := 0
-	right := mid
+	merge(a, start, mid, end)
+}
 
-	for i := 0; ; i++ {
-		if s[left] <= a[right] {
-			a[i] = s[left]
-			left++
-			if left == mid {
-				break
-			}
+func merge(a []int, start, mid, end int) {
+	tmp := make([]int, end-start+1)
+
+	i := start
+	j := mid + 1
+	k := 0
+
+	for ; i <= mid && j <= end; k++ {
+		if a[i] < a[j] {
+			tmp[k] = a[i]
+			i++
 		} else {
-			a[i] = a[right]
-			right++
-			if right == len(a) {
-				copy(a[i+1:], s[left:mid])
-				break
-			}
+			tmp[k] = a[j]
+			j++
 		}
 	}
+
+	for ; i <= mid; i++ {
+		tmp[k] = a[i]
+		k++
+	}
+
+	for ; j <= end; j++ {
+		tmp[k] = a[j]
+		k++
+	}
+
+	copy(a[start:end+1], tmp)
 }
